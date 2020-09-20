@@ -1,0 +1,149 @@
+<html>
+<head>
+    <title>Convet Text and url to QR code</title> 
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<script src="http://code.img2imp.com/cdn/i2i_qrcode.min.js"></script>
+    <style>
+        .makeSpace {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        .download_btn{
+            margin-top: 15px;
+            margin-bottom: 10px;
+            width:100%; 
+        }
+		a{
+			color:white;
+		}
+    </style>
+</head>
+<body>
+<body>
+<main> 
+
+
+<div class="jumbotron text-center">
+        <div class="container">
+            <div class="row">
+                <!--  5(inputs) - 7(QR Output) col  -->
+                <div class="col-sm-5">
+                    <h1>Enter Your Text or URL to convert into QRcode</h1>
+                    <input type="text" class="form-control" id="qrinput" placeholder="Enter text or URL">
+                    <br></hr>
+                    <b>For Color reference <a style="color:red;" href="https://www.w3schools.com/colors/colors_picker.asp" target="blenk">click here</a></b>
+                    
+                    <!-- Front and Background color Input on 1st Row with 1-5-1 div  -->
+                    <div class="row">
+                        <div class="col-sm-1"></div>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control makeSpace" id="colorDark" placeholder="Dark Color" value="#000000">
+                        </div>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control makeSpace" id="colorLight" placeholder="Light Color" value="#ffffff">
+                        </div>
+                        <div class="col-sm-1"></div>
+                    </div>
+
+                    <!-- Width and Height Input on 2nd Row with 1-5-1 div  -->
+                    <div class="row">
+                        <div class="col-sm-1"></div>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control makeSpace" id="width" placeholder="Width" value=300>   
+                        </div>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control makeSpace" id="height" placeholder="Height" value=300>
+                        </div>
+                        <div class="col-sm-1"></div>
+                    </div>
+
+                     <!-- Both Button on 3rd Row with 1-5-1 div  -->
+                    <div class="row">
+                        <div class="col-sm-1"></div>
+                        <div class="col-sm-5">
+                            <button type="button" class="btn btn-primary makeSpace" style="width:100%" onclick="convertQR()">Convert</button>
+                        </div>
+                        <div class="col-sm-5">
+                            <button type="button" class="btn btn-danger makeSpace" style="width:100%" onclick="clearInput()">Clear</button>
+                        </div>
+                        <div class="col-sm-1"></div>
+                    </div>
+
+                </div>
+                <div class="col-sm-7">
+                    <div class="row" style="margin-left: auto; margin-right: auto;"> 
+                        <div id="div_Id_of_qrcode"></div>
+                    </div>
+                    <div class="row" id="qrcode_download" style="margin-left: auto; margin-right: auto;"> </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function download_qr_image() {
+            var myCanva = document.getElementById("div_Id_of_qrcode").childNodes[0];
+            var CanvasElement = document.createElement("CANVAS");
+            CanvasElement.id = "mycanvas";
+            CanvasElement.width = myCanva.width+30;
+            CanvasElement.height = myCanva.height+30;
+            CanvasElement.getContext("2d").fillStyle = "#ffffff";
+            CanvasElement.getContext("2d").rect(0, 0, myCanva.width+30, myCanva.height+30);
+            CanvasElement.getContext("2d").fill();
+            CanvasElement.getContext("2d").drawImage(myCanva,15,15);
+            myCanva = CanvasElement;
+            var qr_link = document.createElement('a');
+            qr_link.download = window.prompt("Enter File Name ");
+            qr_link.href = myCanva.toDataURL();
+            qr_link.click();
+        }
+
+        function clearInput() {
+            document.getElementById("qrinput").value = "";
+            document.getElementById("div_Id_of_qrcode").innerHTML = "";
+            if(document.getElementById("btn_download"))
+            {
+                document.getElementById("btn_download").remove();
+            }
+        }
+        function convertQR() {
+                document.getElementById("div_Id_of_qrcode").innerHTML = "";
+                if(document.getElementById("btn_download"))
+                {
+                    document.getElementById("btn_download").remove();
+                }
+                var inputStr = document.getElementById("qrinput").value; <!-- Get text or URL from Input -->
+                if(inputStr.length<1)
+                {
+                    alert("Please Enter Valid Input");
+                    return;
+                }
+                var inputColorDark = document.getElementById("colorDark").value; <!-- Get colorDark from Input -->
+                var inputColorLight = document.getElementById("colorLight").value; <!-- Get colorLight from Input -->
+                var inputWidth = document.getElementById("width").value; <!-- Getwidth from Input -->
+                var inputHeight = document.getElementById("height").value; <!-- Get height from Input -->
+                var qrcode = new QRCode("div_Id_of_qrcode", {  <!-- Put Id of Output Div here-->
+                    text: inputStr,
+                    width: inputWidth,
+                    height: inputHeight,
+                    colorDark : inputColorDark,
+                    colorLight : inputColorLight,
+                    correctLevel : QRCode.CorrectLevel.H
+                });
+
+                 <!-- Create and Add button to Download QR Code in image form-->
+                var btnElement = document.createElement("BUTTON");
+                var textForBtn = document.createTextNode("Download QR Code");
+                btnElement.id = "btn_download";
+                btnElement.onclick = download_qr_image;
+                btnElement.classList.add("btn");
+                btnElement.classList.add("btn-success");
+                btnElement.classList.add("download_btn");
+                btnElement.appendChild(textForBtn); <!-- Add text to button-->
+                btnElement.style.width = inputWidth;
+                document.getElementById("qrcode_download").appendChild(btnElement);
+        }
+    </script>
+
+</body>
+</html>
